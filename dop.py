@@ -3,6 +3,26 @@ def dist_to(point1,point2):
     R1=((point1[0]-point2[0])**2+(point1[1]-point2[1])**2+(point1[2]-point2[2])**2)**0.5
     return R1
     
+def dop_of_point(sts,point):
+    num_sta=len(sts)
+    matrix=np.array(sts).reshape(num_sta,3)
+    print (matrix)
+    for i in range(0,len(matrix)):
+        R=dist_to(matrix[i][:],point)
+        for j in range(0,len(matrix[0])):
+            matrix[i][j]=(matrix[i][j]-point[j])/R
+    print(matrix)
+    matrix1=matrix.transpose()
+    ATA=np.matmul(matrix1,matrix)
+    Q=np.linalg.inv(ATA)
+    print(Q)
+    HDOP=(Q[0][0]+Q[1][1])**0.5
+    PDOP=(Q[0][0]+Q[1][1]+Q[2][2])**0.5
+    print("HDOP = ",HDOP)
+    print("PDOP = ",PDOP)
+    DOP=[HDOP,PDOP]
+    return DOP
+
 
 num_st=int(input("Введите количество станций"))
 zonе_height=input("Высота зоны")
@@ -21,20 +41,5 @@ for i in range(0,num_st):
 print(stations)   
 
 #задание точки измерения
-op=[10,10,10]
-
-matrix=np.array(stations).reshape(num_st,3)
-print (matrix)
-for i in range(0,len(matrix)):
-    R=dist_to(matrix[i][:],op)
-    for j in range(0,len(matrix[0])):
-        matrix[i][j]=(matrix[i][j]-op[j])/R
-print(matrix)
-matrix1=matrix.transpose()
-ATA=np.matmul(matrix1,matrix)
-Q=np.linalg.inv(ATA)
-print(Q)
-HDOP=(Q[0][0]+Q[1][1])**0.5
-PDOP=(Q[0][0]+Q[1][1]+Q[2][2])**0.5
-print("HDOP = ",HDOP)
-print("PDOP = ",PDOP)
+op=[10,10,27]
+dop_of_point(stations,op)
